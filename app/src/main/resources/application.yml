@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+
+# 日志
+logging:
+  level:
+    cn:
+      felord: debug
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(-){faint} %clr([%14.14t]){faint} %clr(%-40.40logger.%13.13M){cyan} %clr(%3.3L) %clr(:){faint} %msg%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+    file: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(-){faint} %clr([%14.14t]){faint} %clr(%-40.40logger.%13.13M){cyan} %clr(%3.3L) %clr(:){faint} %msg%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
+# dynamodb配置
+amazon:
+  aws:
+    accesskey: key
+    secretkey: key2
+  dynamodb:
+    endpoint: http://localhost:8000/
+
+swagger:
+  contact:
+    email: 44010083@qq.com
+    name: zhong002
+  enable: true
+  title: Tiny:RESTful API
+  version: 1.0
