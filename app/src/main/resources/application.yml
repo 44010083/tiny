@@ -15,15 +15,15 @@ logging:
 # dynamodb配置
 amazon:
   aws:
-    accesskey: key
-    secretkey: key2
+    accesskey: ${DYNAMODB_ACCESSKEY:accesskey}
+    secretkey: ${DYNAMODB_SECRETKEY:secretkey}
   dynamodb:
-    endpoint: http://localhost:8000/
+    endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8000}
 
 swagger:
   contact:
     email: 44010083@qq.com
     name: zhong002
-  enable: true
+  enable: ${SWAGGER_ENABLE:true}
   title: Tiny:RESTful API
   version: 1.0
