@@ -41,8 +41,10 @@ public class TinyServiceImpl implements ITinyService {
     @Resource
     DictRepo dictRepo;
 
-    /**
-     * 把数字转换成相对应的进制,目前支持(2-62)进制
+    /*
+     把数字转换成相对应的进制,目前支持(2-62)进制
+     作用：可以有效降低字符串长度
+     例如：10000000000000000L转义后为PFWWUluKq
      */
     public String number2tiny(long number, int decimal) {
         log.info(JSON.toJSONString(charMap));
@@ -67,30 +69,39 @@ public class TinyServiceImpl implements ITinyService {
         if (oldTinyDict.isPresent() && !StringUtils.isEmpty(oldTinyDict.get().getName())) {
             return oldTinyDict.get().getName();
         }
-        //获取保存的上次使用的加密数字
-        Optional<Dict> lastIdDictOptional = dictRepo.findByName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME);
-        long lastId = Long.parseLong(String.valueOf(GlobalConstant.ONE));
-        Dict lastIdDict = new Dict();
-        lastIdDict.setName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME);
-        lastIdDict.setValue(String.valueOf(lastId));
-        if (lastIdDictOptional.isPresent()) {
-            lastIdDict = lastIdDictOptional.get();
-            lastId = Long.parseLong(lastIdDict.getValue());
-            //lastId自增
-            lastId++;
-            //保存lastId
-            lastIdDict.setValue(String.valueOf(lastId));
-        }
-        dictRepo.save(lastIdDict);
-
-        //计算获得tiny
-        String tiny = number2tiny(lastId, GlobalConstant.DECIMAL);
-        Dict tinyDict = new Dict();
-        tinyDict.setName(tiny);
-        tinyDict.setValue(url);
-        //保存tinyDict
-        dictRepo.save(tinyDict);
-        return tiny;
+        /*如果不存在记录,那么需要执行
+         1、获取到上次的加密数字（保存在数据字典dict的#id里面）
+         2、该id自增，并更新为dict的#id的value
+         3、执行number2tiny将该id转义为62进制的字符串（number2tiny的作用是降低字符串的长度）
+         */
+        Optional<Dict> lastIdDictOptional;
+        String tiny = "";
+        //为了防止
+        do {
+            //获取保存的上次使用的加密数字
+            lastIdDictOptional = dictRepo.findByName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME);
+            if (lastIdDictOptional.isPresent()) {
+                long lastId = Long.parseLong(lastIdDictOptional.get().getValue());
+                //lastId自增
+                lastId++;
+                //保存lastId
+                Dict lastIdDict;
+                lastIdDict = lastIdDictOptional.get();
+                lastIdDict.setValue(String.valueOf(lastId));
+                dictRepo.save(lastIdDict);
+                //计算获得tiny
+                tiny = number2tiny(lastId, GlobalConstant.DECIMAL);
+            }
+            if (!StringUtils.isEmpty(tiny)) {
+                Dict tinyDict = new Dict();
+                tinyDict.setName(tiny);
+                tinyDict.setValue(url);
+                //保存tinyDict
+                dictRepo.save(tinyDict);
+                return tiny;
+            }
+        } while (StringUtils.isEmpty(tiny) || !lastIdDictOptional.isPresent());
+        return null;
     }
 
     @Override
@@ -104,10 +115,13 @@ public class TinyServiceImpl implements ITinyService {
         return null;
     }
 
+
     private void checkURL(String urlStr) throws Exception {
+        //检查输入为空
         if (StringUtils.isEmpty(urlStr)) {
             throw new Exception(GlobalConstant.EMPTY_URL_ERROR);
         }
+        //检查输入的url是否OK
         try {
             URL url = new URL(urlStr);
             url.openStream();
