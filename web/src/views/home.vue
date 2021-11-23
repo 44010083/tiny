@@ -57,7 +57,13 @@ export default {
   },
   methods: {
     onSubmit () {
-      let url = '/tiny'
+      let baseUrl = window.location.href
+      if (baseUrl.endsWith('/')) {
+        baseUrl = baseUrl.substring(0, baseUrl.length - 1)
+      }
+      baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf('/'))
+      console.log(baseUrl)
+      let url = baseUrl + '/tiny'
       let params = {
         url: this.form.url
       }
@@ -66,7 +72,7 @@ export default {
       this.$http
         .post(url, params)
         .then((response) => {
-          this.form.tiny = window.location.origin + '/t/' + response.data.data
+          this.form.tiny = baseUrl + '/t/' + response.data.data
         })
         .catch(function (response) {
           this.form.err = response.data.msg
