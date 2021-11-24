@@ -47,7 +47,6 @@ public class TinyServiceImpl implements ITinyService {
      例如：10000000000000000L转义后为PFWWUluKq
      */
     public String number2tiny(long number, int decimal) {
-        log.info(JSON.toJSONString(charMap));
         StringBuilder builder = new StringBuilder();
         while (number != GlobalConstant.ZERO) {
             builder.append(GlobalConstant.ARRAY[(int) (number - (number / decimal) * decimal)]);
