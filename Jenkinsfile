@@ -28,7 +28,7 @@ pipeline {
                 jacoco buildOverBuild: true, changeBuildStatus: true, deltaLineCoverage: '70', exclusionPattern: '**/model/**/*', sourceExclusionPattern: '**/model/**/*'
             }
         }
-        stage('docker build') {
+        stage('打docker镜像') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'password', usernameVariable: 'username')]) {
                     sh 'echo $password | docker login -u $username --password-stdin'
