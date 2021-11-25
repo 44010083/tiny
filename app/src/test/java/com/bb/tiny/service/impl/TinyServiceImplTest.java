@@ -17,6 +17,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * * Copyright (C) 2021  zhong002
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 @PrepareForTest({MockUtil.class})
 // 为了解决使用powermock后，提示classloader错误
 @PowerMockIgnore({"javax.*"})
-public class DictServiceImplTest {
+public class TinyServiceImplTest {
     @Mock
     DictRepo dictRepo;
     @InjectMocks
@@ -113,5 +114,11 @@ public class DictServiceImplTest {
     public void testGetUrl() {
         String result = tinyServiceImpl.getUrl(tiny);
         assertEquals(url, result);
+    }
+
+    @Test
+    public void testGetUrlWhithNull() {
+        String result = tinyServiceImpl.getUrl(null);
+        assertNull(result);
     }
 } 
