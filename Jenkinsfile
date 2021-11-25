@@ -29,7 +29,7 @@ pipeline {
                 echo 'junit report'
                 junit '**/*/surefire-reports/TEST-*.xml'
                 
-                jacoco buildOverBuild: true, changeBuildStatus: true, deltaLineCoverage: '70'
+                jacoco buildOverBuild: true, changeBuildStatus: true, deltaLineCoverage: '70', exclusionPattern: '**/model/**/*', sourceExclusionPattern: '**/model/**/*'
             }
         }
     }
