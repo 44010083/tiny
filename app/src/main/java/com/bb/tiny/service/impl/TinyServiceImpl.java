@@ -1,7 +1,6 @@
 package com.bb.tiny.service.impl;
 
 
-import com.alibaba.fastjson.JSON;
 import com.bb.tiny.model.entity.Dict;
 import com.bb.tiny.repo.DictRepo;
 import com.bb.tiny.service.ITinyService;
@@ -75,7 +74,7 @@ public class TinyServiceImpl implements ITinyService {
          */
         Optional<Dict> lastIdDictOptional;
         String tiny = "";
-        //为了防止
+        //为了防呆。所以增加do-while
         do {
             //获取保存的上次使用的加密数字
             lastIdDictOptional = dictRepo.findByName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME);
