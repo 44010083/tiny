@@ -48,7 +48,9 @@ public class TinyVoTest {
 
     @Test
     public void testEqualObject() {
-        assertFalse(vo.equals(resultVo));
+        boolean result = vo.equals(resultVo);
+        log.info("vo.equals(resultVo - > " + result);
+        assertFalse(result);
     }
 
     @Test
