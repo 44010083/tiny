@@ -6,10 +6,10 @@ pipeline {
             steps {
                 dir('web'){
                     sh "npm install&&npm run build"
-                    sh "rm -Rf app/src/main/resources/static"
-                    sh "rm -Rf app/src/main/resources/index.html"
-                    sh "cp -R web/dist/* app/src/main/resources/"
                 }
+                sh "rm -Rf app/src/main/resources/static"
+                sh "rm -Rf app/src/main/resources/index.html"
+                sh "cp -R web/dist/* app/src/main/resources/"
             }
         }
         stage('APP编译') {
