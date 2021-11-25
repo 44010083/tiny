@@ -8,7 +8,7 @@ pipeline {
                     sh "npm install&&npm run build"
                     sh "rm -Rf app/src/main/resources/static"
                     sh "rm -Rf app/src/main/resources/index.html"
-                    sh "cp -R dist/* app/src/main/resources/"
+                    sh "cp -R web/dist/* app/src/main/resources/"
                 }
             }
         }
