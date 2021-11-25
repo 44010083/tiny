@@ -18,7 +18,7 @@ amazon:
     accesskey: ${DYNAMODB_ACCESSKEY:AKIAWIMS3PPRVRY35HZM}
     secretkey: ${DYNAMODB_SECRETKEY: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}
   dynamodb:
-    endpoint: ${DYNAMODB_ENDPOINT:http://127.0.0.1:8000}
+    endpoint: ${DYNAMODB_ENDPOINT:https://dynamodb.us-east-2.amazonaws.com}
 
 swagger:
   contact:
