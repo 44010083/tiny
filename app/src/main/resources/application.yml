@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:80}
+  port: ${PORT:8080}
   tomcat:
     uri-encoding: UTF-8
 
@@ -15,10 +15,10 @@ logging:
 # dynamodb配置
 amazon:
   aws:
-    accesskey: ${DYNAMODB_ACCESSKEY:accesskey}
-    secretkey: ${DYNAMODB_SECRETKEY:secretkey}
+    accesskey: ${DYNAMODB_ACCESSKEY:AKIAWIMS3PPRVRY35HZM}
+    secretkey: ${DYNAMODB_SECRETKEY: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}
   dynamodb:
-    endpoint: ${DYNAMODB_ENDPOINT:http://localhost:8000}
+    endpoint: ${DYNAMODB_ENDPOINT:https://dynamodb.us-east-2.amazonaws.com}
 
 swagger:
   contact:
