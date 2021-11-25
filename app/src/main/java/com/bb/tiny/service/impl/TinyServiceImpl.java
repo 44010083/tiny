@@ -74,11 +74,12 @@ public class TinyServiceImpl implements ITinyService {
          */
         Optional<Dict> lastIdDictOptional;
         String tiny = "";
-        //为了防呆。所以增加do-while
+        //为了防呆。所以增加do-while，防止读取dictRepo时异常的影响(少数时候由于网络等因数)
+        int token = 0;
         do {
             //获取保存的上次使用的加密数字
             lastIdDictOptional = dictRepo.findByName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME);
-            if (lastIdDictOptional.isPresent()) {
+            if (lastIdDictOptional.isPresent() && !StringUtils.isEmpty(lastIdDictOptional.get().getValue())) {
                 long lastId = Long.parseLong(lastIdDictOptional.get().getValue());
                 //lastId自增
                 lastId++;
@@ -98,7 +99,8 @@ public class TinyServiceImpl implements ITinyService {
                 dictRepo.save(tinyDict);
                 return tiny;
             }
-        } while (StringUtils.isEmpty(tiny) || !lastIdDictOptional.isPresent());
+            token++;
+        } while (token < 5 && (StringUtils.isEmpty(tiny) || !lastIdDictOptional.isPresent()));
         return null;
     }
 

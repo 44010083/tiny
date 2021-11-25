@@ -42,12 +42,14 @@ public class TinyServiceImplTest {
     @InjectMocks
     TinyServiceImpl tinyServiceImpl;
     String errUrl = "1https://www.baidu.com";
-    String emptyUrl = "";
+
     String url = "https://www.baidu.com";
     String newUrl = "https://aws.amazon.com/";
     String tiny = "6";
-    String tokenName = "#id";
+    String tokenName = GlobalConstant.TINY_TOKEN_ID_DICT_NAME;
     String tokenValue = "5";
+    String dictErrName = "#err";
+    String dictErrValue = "";
 
     @Before
     public void before() {
@@ -60,6 +62,17 @@ public class TinyServiceImplTest {
         dict.setValue(tokenValue);
         dict.setName(tokenName);
         PowerMockito.when(dictRepo.findByName(tokenName)).thenReturn(java.util.Optional.of(dict));
+
+        //注入异常dict数据
+        dict = new Dict();
+        dict.setValue(dictErrValue);
+        dict.setName(dictErrName);
+        PowerMockito.when(dictRepo.findByName(dictErrName)).thenReturn(java.util.Optional.of(dict));
+
+        dict = new Dict();
+        dict.setValue(newUrl);
+        dict.setName(null);
+        PowerMockito.when(dictRepo.findByValue(newUrl)).thenReturn(java.util.Optional.of(dict));
     }
 
     @After
@@ -97,7 +110,21 @@ public class TinyServiceImplTest {
     @Test
     public void testGetTinyWithEmptyUrl() {
         try {
-            tinyServiceImpl.getTiny(emptyUrl);
+            tinyServiceImpl.getTiny(dictErrValue);
+        } catch (Exception e) {
+            assertEquals(GlobalConstant.EMPTY_URL_ERROR, e.getMessage());
+        }
+
+    }
+
+    @Test
+    public void testGetTinyWithErrToken() {
+        Dict dict = new Dict();
+        dict.setValue(null);
+        dict.setName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME);
+        PowerMockito.when(dictRepo.findByName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME)).thenReturn(java.util.Optional.of(dict));
+        try {
+            tinyServiceImpl.getTiny(newUrl);
         } catch (Exception e) {
             assertEquals(GlobalConstant.EMPTY_URL_ERROR, e.getMessage());
         }
@@ -119,6 +146,12 @@ public class TinyServiceImplTest {
     @Test
     public void testGetUrlWhithNull() {
         String result = tinyServiceImpl.getUrl(null);
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetUrlWhithErr() {
+        String result = tinyServiceImpl.getUrl(dictErrName);
         assertNull(result);
     }
 } 
