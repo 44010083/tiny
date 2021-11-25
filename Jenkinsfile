@@ -2,17 +2,13 @@ pipeline {
     agent any
 
     stages {
-        stage('拉取代码') {
-            steps {
-                //echo 'git'
-                git([branch:'main',url:'https://github.com/44010083/tiny.git'])
-            }
-        }
          stage('WEB编译') {
             steps {
                 dir('web'){
-                    //echo 'mvn'
                     sh "npm install&&npm run build"
+                    sh "rm -Rf app/src/main/resources/static"
+                    sh "rm -Rf app/src/main/resources/index.html"
+                    sh "cp -R dist/* app/src/main/resources/"
                 }
             }
         }
@@ -30,6 +26,15 @@ pipeline {
                 junit '**/*/surefire-reports/TEST-*.xml'
                 
                 jacoco buildOverBuild: true, changeBuildStatus: true, deltaLineCoverage: '70', exclusionPattern: '**/model/**/*', sourceExclusionPattern: '**/model/**/*'
+            }
+        }
+        stage('docker build') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'password', usernameVariable: 'username')]) {
+                    sh 'echo $password | docker login -u $username --password-stdin'
+                    sh 'docker build -t vinjara/tiny:app-latest .'
+                    sh "docker push vinjara/tiny:app-latest"
+                }
             }
         }
     }
