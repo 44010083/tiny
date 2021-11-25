@@ -124,11 +124,19 @@ public class TinyServiceImplTest {
         dict.setName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME);
         PowerMockito.when(dictRepo.findByName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME)).thenReturn(java.util.Optional.of(dict));
         try {
-            tinyServiceImpl.getTiny(newUrl);
+            String result = tinyServiceImpl.getTiny(newUrl);
+            assertNull(result);
         } catch (Exception e) {
-            assertEquals(GlobalConstant.EMPTY_URL_ERROR, e.getMessage());
+            assertEquals(GlobalConstant.EXPLORE_URL_ERROR, e.getMessage());
         }
-
+        dict = new Dict();
+        PowerMockito.when(dictRepo.findByName(GlobalConstant.TINY_TOKEN_ID_DICT_NAME)).thenReturn(java.util.Optional.of(dict));
+        try {
+            String result = tinyServiceImpl.getTiny(newUrl);
+            assertNull(result);
+        } catch (Exception e) {
+            assertEquals(GlobalConstant.EXPLORE_URL_ERROR, e.getMessage());
+        }
     }
 
     @Test
