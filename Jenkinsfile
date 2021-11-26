@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+    parameters {
+      string defaultValue: 'vinjara/tiny:app-latest', name: 'imgName'
+      string defaultValue: 'tiny', name: 'appName'
+    }
     stages {
          stage('WEB编译') {
             steps {
@@ -32,8 +35,29 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'password', usernameVariable: 'username')]) {
                     sh 'echo $password | docker login -u $username --password-stdin'
-                    sh 'docker build -t vinjara/tiny:app-latest .'
-                    sh "docker push vinjara/tiny:app-latest"
+                    sh 'docker build -t $imgName .'
+                    sh "docker push $imgName"
+                }
+            }
+        }
+        stage('部署') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: '172.31.26.159', passwordVariable: 'password', usernameVariable: 'username')]) {
+                    script {
+                      def remote = [:]
+                      remote.user = username
+                      remote.password = password
+                      //remote.identityFile = identity
+                      remote.host = '172.31.26.159'
+                      remote.name = '172.31.26.159'
+                      remote.allowAnyHosts = true
+                      sshCommand remote: remote, command: "docker pull $imgName"
+                      try{
+                        sshCommand remote: remote, command: 'docker rm -f $appName'
+                      }catch (e){
+                      }
+                      sshCommand remote: remote, command: "docker run -d --name $appName -p 8080:8080 $imgName"
+                  }
                 }
             }
         }
