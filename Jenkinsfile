@@ -40,7 +40,7 @@ pipeline {
                 }
             }
         }
-        stage('部署') {
+        stage('部署172.31.26.159') {
             steps {
                 withCredentials([usernamePassword(credentialsId: '172.31.26.159', passwordVariable: 'password', usernameVariable: 'username')]) {
                     script {
@@ -50,6 +50,27 @@ pipeline {
                       //remote.identityFile = identity
                       remote.host = '172.31.26.159'
                       remote.name = '172.31.26.159'
+                      remote.allowAnyHosts = true
+                      sshCommand remote: remote, command: "docker pull $imgName"
+                      try{
+                        sshCommand remote: remote, command: "docker rm -f $appName"
+                      }catch (e){
+                      }
+                      sshCommand remote: remote, command: "docker run -d --name $appName -p 8080:8080 $imgName"
+                  }
+                }
+            }
+        }
+        stage('部署172.31.20.61') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: '172.31.26.159', passwordVariable: 'password', usernameVariable: 'username')]) {
+                    script {
+                      def remote = [:]
+                      remote.user = username
+                      remote.password = password
+                      //remote.identityFile = identity
+                      remote.host = '172.31.20.61'
+                      remote.name = '172.31.20.61'
                       remote.allowAnyHosts = true
                       sshCommand remote: remote, command: "docker pull $imgName"
                       try{
