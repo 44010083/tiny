@@ -53,7 +53,7 @@ pipeline {
                       remote.allowAnyHosts = true
                       sshCommand remote: remote, command: "docker pull $imgName"
                       try{
-                        sshCommand remote: remote, command: 'docker rm -f $appName'
+                        sshCommand remote: remote, command: "docker rm -f $appName"
                       }catch (e){
                       }
                       sshCommand remote: remote, command: "docker run -d --name $appName -p 8080:8080 $imgName"
